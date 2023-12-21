@@ -21,15 +21,22 @@ contract Battles is Pokedex {
         );
     }
 
-    function getEnemyMoves() internal returns (bytes memory) {
-        address _addr = 0x9b0c6189f1E7d1591107C03c544AB6a099c83c4c;
-        (bool success, ) = payable(_addr).call{value: 2, gas: 100000}(
-            abi.encodeWithSignature("requestRandomWords()")
+    function createVRFContract() internal returns (VRFv2DirectFundingConsumer) {
+        VRFv2DirectFundingConsumer myVRF = new VRFv2DirectFundingConsumer();
+        return VRFv2DirectFundingConsumer(address(myVRF));
+    }
+
+    function sendLink(address _addr) internal {
+        (bool success, ) = payable(_addr).call{value: msg.value, gas: 100000}(
+            ""
         );
+        require(success, "Link transaction erroned");
         emit Response(success);
-        VRFv2DirectFundingConsumer randomNumber = VRFv2DirectFundingConsumer(
-            0x9b0c6189f1E7d1591107C03c544AB6a099c83c4c
-        );
-        return randomNumber.randomWords;
+    }
+
+    function getEnemyMoves() internal returns (uint256) {
+        VRFv2DirectFundingConsumer vrf = createVRFContract();
+        sendLink(address(vrf));
+        return vrf.requestRandomWords();
     }
 }
