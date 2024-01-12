@@ -9,15 +9,27 @@ contract Battles is Pokedex {
 
     function selectPokemon(
         uint256 selected
-    ) external view returns (uint256 level, uint256 strength, uint256 hp) {
+    )
+        external
+        view
+        returns (
+            string memory name,
+            uint256 level,
+            uint256 strength,
+            uint256 hp,
+            typePokemon typeOf
+        )
+    {
         require(
             selected < pokemons[msg.sender].length,
             "Selected pokemon doesn't exist"
         );
         return (
+            pokemons[msg.sender][selected].name,
             pokemons[msg.sender][selected].level,
             pokemons[msg.sender][selected].strength,
-            pokemons[msg.sender][selected].hp
+            pokemons[msg.sender][selected].hp,
+            pokemons[msg.sender][selected].typeOf
         );
     }
 
